@@ -226,10 +226,19 @@
 
     <!-- Landingpage -->
     <section class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
-        <!-- Background Video Placeholder -->
-        <div class="absolute inset-0 z-0 bg-surface-800">
-            <!-- Replace with actual video: <video src="/assets/hero/showreel.mp4" autoplay loop muted playsinline class="w-full h-full object-cover opacity-40"></video> -->
-            <video src="resources/videos/idea.mp4" autoplay loop muted playsinline class="w-full h-full object-cover opacity-40"></video>
+        <!-- Background Video -->
+        <div class="absolute inset-0 z-0 bg-surface-800 pointer-events-none">
+            <video 
+                id="hero-video"
+                src="resources/videos/idea.mp4" 
+                autoplay 
+                loop 
+                muted 
+                playsinline 
+                webkit-playsinline
+                preload="auto"
+                class="w-full h-full object-cover opacity-40 pointer-events-none">
+            </video>
             <div class="absolute inset-0 bg-gradient-to-t from-surface-900 via-transparent to-surface-900/50"></div>
             <div class="absolute inset-0 bg-gradient-to-r from-surface-900 via-transparent to-transparent"></div>
         </div>
@@ -254,6 +263,27 @@
             </div>
         </div>
     </section>
+
+    <!-- Script de respaldo para forzar la reproducción automática en móviles -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const heroVideo = document.getElementById('hero-video');
+            if (heroVideo) {
+                heroVideo.muted = true; // Asegurar estado en silencio explícito
+                const playPromise = heroVideo.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.catch(() => {
+                        // Si el móvil bloquea el autoplay (ej. por Ahorro de Batería), 
+                        // reintentamos al primer toque que dé el usuario en la pantalla
+                        document.addEventListener('touchstart', () => {
+                            heroVideo.play();
+                        }, { once: true });
+                    });
+                }
+            }
+        });
+    </script>
 
     <!-- Services -->
     <section id="services" class="py-24 md:py-32 relative bg-surface-900">
